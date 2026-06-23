@@ -1,0 +1,43 @@
+{
+  "name": "s7-voice-widget",
+  "version": "1.0.0",
+  "description": "Embeddable ElevenLabs voice + chat widget (chat, in-browser voice, get-a-call). Drop-in <script> tag for any website.",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "typecheck": "tsc --noEmit"
+  },
+  "exports": {
+    ".": {
+      "types": "./dist/embed.d.ts",
+      "import": "./dist/s7-voice-widget.js"
+    },
+    "./server": {
+      "types": "./server/outbound-call.ts",
+      "import": "./server/outbound-call.ts"
+    }
+  },
+  "files": [
+    "dist",
+    "src",
+    "server"
+  ],
+  "dependencies": {
+    "@elevenlabs/client": "^1.7.0",
+    "@elevenlabs/react": "^1.6.0",
+    "react": "19.2.4",
+    "react-dom": "19.2.4"
+  },
+  "devDependencies": {
+    "@types/express": "^5.0.0",
+    "@types/node": "^20",
+    "@types/react": "^19",
+    "@types/react-dom": "^19",
+    "@vitejs/plugin-react": "^4.3.4",
+    "express": "^5.1.0",
+    "typescript": "^5",
+    "vite": "^6.0.7"
+  }
+}

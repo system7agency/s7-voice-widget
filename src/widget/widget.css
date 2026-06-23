@@ -1,0 +1,1142 @@
+/*
+ * S7 Voice Widget — styles.
+ *
+ * Ported verbatim from the s7labs S7ChatWidget.module.css. Because the widget
+ * renders inside a Shadow DOM, these class names live in an isolated scope and
+ * cannot collide with (or leak into) the host page. The design is byte-for-byte
+ * identical to the original.
+ *
+ * The only addition vs. the source is `.wordmark-superscript` (previously a
+ * sitewide global class in s7labs) so the "7" wordmark renders correctly in a
+ * standalone context.
+ */
+
+.wordmark-superscript {
+  font-size: 0.6em;
+  vertical-align: super;
+  line-height: 0;
+}
+
+.root {
+  --s7-bg: #060608;
+  --s7-surface: #101014;
+  --s7-surface-2: #16161b;
+  --s7-border: rgba(255, 255, 255, 0.07);
+  --s7-border-strong: rgba(255, 255, 255, 0.14);
+  --s7-fg: #ededed;
+  --s7-fg-muted: #8a8a8f;
+  --s7-fg-dim: #55555b;
+  --s7-fg-deep: #2a2a2e;
+  --s7-accent: #04e3ee;
+  --s7-accent-dim: rgba(4, 227, 238, 0.18);
+  --s7-accent-glow: rgba(4, 227, 238, 0.35);
+  --s7-green: #4fcf8a;
+  --s7-mono: var(--font-mono), ui-monospace, 'SF Mono', Menlo, monospace;
+  --s7-sans: var(--font-sans), ui-sans-serif, system-ui, sans-serif;
+
+  position: fixed;
+  bottom: 28px;
+  right: 28px;
+  z-index: 90;
+  color: var(--s7-fg);
+  font-family: var(--s7-sans);
+  pointer-events: none;
+}
+
+.root > * {
+  pointer-events: auto;
+}
+
+/* --- Collapsed bubble --- */
+.bubble {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  background: transparent;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  color: inherit;
+}
+
+.orb {
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  background: radial-gradient(
+    circle at 32% 28%,
+    #bffafe 0%,
+    #04e3ee 36%,
+    #0ab3ce 68%,
+    #06212f 100%
+  );
+  box-shadow: 0 0 22px var(--s7-accent-glow);
+  animation: orbBreathe 4.2s ease-in-out infinite;
+  flex-shrink: 0;
+}
+
+@keyframes orbBreathe {
+  0%,
+  100% {
+    box-shadow: 0 0 22px var(--s7-accent-glow);
+  }
+  50% {
+    box-shadow: 0 0 36px var(--s7-accent-glow);
+  }
+}
+
+.pill {
+  position: relative;
+  background: rgba(16, 16, 20, 0.88);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid var(--s7-accent);
+  border-radius: 10px;
+  padding: 9px 14px;
+  font-family: var(--s7-mono);
+  font-size: 11.5px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: #fff;
+  white-space: nowrap;
+  box-shadow: 0 0 18px color-mix(in srgb, var(--s7-accent) 25%, transparent);
+  isolation: isolate;
+}
+
+@property --s7-halo-angle {
+  syntax: '<angle>';
+  initial-value: 0deg;
+  inherits: false;
+}
+
+.pill::before {
+  content: '';
+  position: absolute;
+  inset: -1px;
+  border-radius: 11px;
+  padding: 1px;
+  background: conic-gradient(
+    from var(--s7-halo-angle),
+    rgba(4, 227, 238, 0) 0deg,
+    rgba(4, 227, 238, 0) 280deg,
+    var(--s7-accent) 340deg,
+    #ffffff 360deg,
+    var(--s7-accent) 380deg,
+    rgba(4, 227, 238, 0) 440deg,
+    rgba(4, 227, 238, 0) 720deg
+  );
+  -webkit-mask:
+    linear-gradient(#000 0 0) content-box,
+    linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask:
+    linear-gradient(#000 0 0) content-box,
+    linear-gradient(#000 0 0);
+  mask-composite: exclude;
+  animation: pillHaloSpin 3.6s linear infinite;
+  pointer-events: none;
+}
+
+@keyframes pillHaloSpin {
+  to {
+    --s7-halo-angle: 360deg;
+  }
+}
+
+.pillArrow {
+  color: var(--s7-accent);
+}
+
+/* --- Expanded panel --- */
+.panel {
+  width: 400px;
+  height: 580px;
+  background: linear-gradient(180deg, #0b0b10, #070709);
+  border: 1px solid var(--s7-border-strong);
+  border-radius: 14px;
+  box-shadow:
+    0 28px 80px -28px rgba(0, 0, 0, 0.7),
+    0 0 60px -20px var(--s7-accent-glow);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  position: relative;
+}
+
+.panel::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background-image:
+    linear-gradient(rgba(255, 255, 255, 0.025) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.025) 1px, transparent 1px);
+  background-size: 32px 32px;
+  z-index: 0;
+}
+
+.panel > * {
+  position: relative;
+  z-index: 1;
+}
+
+/* Header */
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  padding: 14px 16px;
+  border-bottom: 1px solid var(--s7-border);
+}
+
+.headerLeft {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.headerLabelRow {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.miniOrb {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: radial-gradient(
+    circle at 32% 28%,
+    #bffafe 0%,
+    #04e3ee 36%,
+    #0ab3ce 68%,
+    #06212f 100%
+  );
+  box-shadow: 0 0 8px var(--s7-accent-glow);
+}
+
+.headerLabel {
+  font-family: var(--s7-mono);
+  font-size: 11px;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--s7-fg);
+}
+
+.statusLine {
+  font-family: var(--s7-mono);
+  font-size: 10px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--s7-fg-muted);
+  padding-left: 28px;
+}
+
+.statusDot {
+  color: var(--s7-green);
+  text-shadow: 0 0 6px var(--s7-green);
+  margin-right: 4px;
+}
+
+.headerButtons {
+  display: flex;
+  gap: 6px;
+}
+
+.iconBtn {
+  width: 28px;
+  height: 28px;
+  background: transparent;
+  border: 1px solid var(--s7-border);
+  border-radius: 6px;
+  color: var(--s7-fg-muted);
+  font-family: var(--s7-mono);
+  font-size: 14px;
+  line-height: 1;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.iconBtn:hover {
+  color: var(--s7-fg);
+  border-color: var(--s7-border-strong);
+}
+
+/* Messages */
+.messages {
+  flex: 1;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  padding: 20px 18px;
+}
+
+.divider {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-family: var(--s7-mono);
+  font-size: 10px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--s7-fg-dim);
+}
+
+.divider::before,
+.divider::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: var(--s7-border);
+}
+
+.msg {
+  display: flex;
+  gap: 10px;
+  max-width: 100%;
+}
+
+.msgUser {
+  flex-direction: row-reverse;
+  align-self: flex-end;
+}
+
+.avatar {
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  background: radial-gradient(
+    circle at 32% 28%,
+    #bffafe 0%,
+    #04e3ee 36%,
+    #0ab3ce 68%,
+    #06212f 100%
+  );
+  box-shadow: 0 0 8px var(--s7-accent-glow);
+}
+
+.avatarUser {
+  border-radius: 6px;
+  background: var(--s7-surface-2);
+  border: 1px solid var(--s7-border-strong);
+  box-shadow: none;
+  font-family: var(--s7-mono);
+  font-size: 9.5px;
+  letter-spacing: 0.12em;
+  color: var(--s7-fg-muted);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.msgBody {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  min-width: 0;
+}
+
+.msgMeta {
+  font-family: var(--s7-mono);
+  font-size: 10px;
+  letter-spacing: 0.08em;
+  color: var(--s7-fg-dim);
+}
+
+.bubbleBody {
+  background: var(--s7-surface);
+  border: 1px solid var(--s7-border);
+  border-radius: 10px;
+  padding: 12px 14px;
+  font-family: var(--s7-sans);
+  font-size: 13.5px;
+  line-height: 1.55;
+  color: var(--s7-fg);
+  white-space: pre-wrap;
+  word-wrap: break-word;
+}
+
+.bubbleUser {
+  background: transparent;
+  border-color: var(--s7-accent-dim);
+}
+
+.typing {
+  font-family: var(--s7-mono);
+  font-size: 12px;
+  color: var(--s7-fg-muted);
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.caret {
+  display: inline-block;
+  width: 8px;
+  height: 14px;
+  background: var(--s7-accent);
+  animation: caret 1s steps(1) infinite;
+}
+
+@keyframes caret {
+  50% {
+    opacity: 0;
+  }
+}
+
+.error {
+  border-color: rgba(255, 90, 90, 0.4);
+  color: #ff9d9d;
+}
+
+/* Input */
+.input {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 14px;
+  border-top: 1px solid var(--s7-border);
+  flex-shrink: 0;
+}
+
+.prompt {
+  font-family: var(--s7-mono);
+  font-size: 13px;
+  color: var(--s7-accent);
+}
+
+.field {
+  flex: 1;
+  background: transparent;
+  border: none;
+  outline: none;
+  color: var(--s7-fg);
+  font-family: var(--s7-mono);
+  font-size: 13px;
+  padding: 0;
+}
+
+.field::placeholder {
+  color: var(--s7-fg-dim);
+}
+
+.send {
+  width: 34px;
+  height: 34px;
+  border-radius: 8px;
+  background: var(--s7-accent);
+  border: none;
+  color: #04181b;
+  font-family: var(--s7-mono);
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.send:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+/* Footer */
+.footer {
+  display: flex;
+  justify-content: space-between;
+  padding: 10px 16px 12px;
+  font-family: var(--s7-mono);
+  font-size: 9.5px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--s7-fg-deep);
+  border-top: 1px solid var(--s7-border);
+}
+
+/* Mode toggle */
+.modeToggle {
+  display: flex;
+  gap: 14px;
+  padding-left: 28px;
+  margin-top: 4px;
+}
+
+.modeBtn {
+  background: transparent;
+  border: none;
+  border-bottom: 1px solid transparent;
+  padding: 2px 0;
+  font-family: var(--s7-mono);
+  font-size: 10px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--s7-fg-dim);
+  cursor: pointer;
+}
+
+.modeBtnActive {
+  color: var(--s7-accent);
+  border-bottom-color: var(--s7-accent);
+}
+
+.statusDotGreen {
+  color: var(--s7-green);
+  text-shadow: 0 0 6px var(--s7-green);
+  margin-right: 4px;
+}
+
+/* Voice pane */
+.voicePane {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 24px;
+  padding: 24px;
+}
+
+.voiceOrb {
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  background: radial-gradient(
+    circle at 32% 28%,
+    #bffafe 0%,
+    #04e3ee 36%,
+    #0ab3ce 68%,
+    #06212f 100%
+  );
+  box-shadow: 0 0 40px var(--s7-accent-glow);
+  animation: orbBreatheLg 4.2s ease-in-out infinite;
+}
+
+.voiceOrbActive {
+  animation: orbBreatheActive 2.4s ease-in-out infinite;
+  transform: scale(1.05);
+}
+
+.voiceOrbSm {
+  width: 80px;
+  height: 80px;
+  box-shadow: 0 0 28px var(--s7-accent-glow);
+}
+
+/* --- Voice-idle: three-option picker --- */
+.callOptions {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  width: 100%;
+  max-width: 320px;
+}
+
+.callCard {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  width: 100%;
+  text-align: left;
+  background: var(--s7-surface);
+  border: 1px solid var(--s7-border);
+  border-radius: 10px;
+  padding: 14px 16px;
+  color: var(--s7-fg);
+  cursor: pointer;
+  text-decoration: none;
+  transition:
+    border-color 160ms ease,
+    background 160ms ease;
+}
+
+.callCard:hover {
+  border-color: var(--s7-border-strong);
+  background: var(--s7-surface-2);
+}
+
+/* Terminal-board corner brackets (matches the /agent cards). */
+.callCard::after {
+  content: '';
+  position: absolute;
+  inset: 6px;
+  pointer-events: none;
+  background:
+    linear-gradient(var(--s7-border-strong), var(--s7-border-strong)) 0 0 / 9px 1px no-repeat,
+    linear-gradient(var(--s7-border-strong), var(--s7-border-strong)) 0 0 / 1px 9px no-repeat,
+    linear-gradient(var(--s7-border-strong), var(--s7-border-strong)) 100% 0 / 9px 1px no-repeat,
+    linear-gradient(var(--s7-border-strong), var(--s7-border-strong)) 100% 0 / 1px 9px no-repeat,
+    linear-gradient(var(--s7-border-strong), var(--s7-border-strong)) 0 100% / 9px 1px no-repeat,
+    linear-gradient(var(--s7-border-strong), var(--s7-border-strong)) 0 100% / 1px 9px no-repeat,
+    linear-gradient(var(--s7-border-strong), var(--s7-border-strong)) 100% 100% / 9px 1px no-repeat,
+    linear-gradient(var(--s7-border-strong), var(--s7-border-strong)) 100% 100% / 1px 9px no-repeat;
+  opacity: 0.5;
+  transition: opacity 160ms ease;
+}
+
+.callCard:hover::after {
+  opacity: 1;
+}
+
+/*
+ * Glowing variant for the two primary call options ("Talk in browser",
+ * "Get a call"). Echoes the orb's cyan glow language so the cards read as
+ * extensions of the orb. Additive: the corner brackets (::after) still layer
+ * on top. "Call us directly" stays on the plain .callCard treatment.
+ */
+.callCard.callCardGlow {
+  border-color: var(--s7-accent);
+  background: linear-gradient(
+    180deg,
+    color-mix(in srgb, var(--s7-accent) 4%, transparent),
+    color-mix(in srgb, var(--s7-accent) 1%, transparent)
+  );
+  box-shadow:
+    0 0 0 1px color-mix(in srgb, var(--s7-accent) 18%, transparent),
+    0 0 24px -4px color-mix(in srgb, var(--s7-accent) 28%, transparent),
+    inset 0 0 32px -12px color-mix(in srgb, var(--s7-accent) 12%, transparent);
+  /* Breathe in sync with the orb (orbBreatheLg / orbBreathe use 4.2s). */
+  animation: optionGlow 4.2s ease-in-out infinite;
+  transition:
+    box-shadow 320ms ease,
+    border-color 320ms ease;
+}
+
+.callCard.callCardGlow:hover {
+  border-color: var(--s7-accent);
+  /* Drop the breathing so the intensified static glow isn't overridden. */
+  animation: none;
+  box-shadow:
+    0 0 0 1px color-mix(in srgb, var(--s7-accent) 32%, transparent),
+    0 0 36px -4px color-mix(in srgb, var(--s7-accent) 45%, transparent),
+    inset 0 0 40px -12px color-mix(in srgb, var(--s7-accent) 18%, transparent);
+}
+
+@keyframes optionGlow {
+  0%,
+  100% {
+    box-shadow:
+      0 0 0 1px color-mix(in srgb, var(--s7-accent) 18%, transparent),
+      0 0 24px -4px color-mix(in srgb, var(--s7-accent) 28%, transparent),
+      inset 0 0 32px -12px color-mix(in srgb, var(--s7-accent) 12%, transparent);
+  }
+  50% {
+    box-shadow:
+      0 0 0 1px color-mix(in srgb, var(--s7-accent) 28%, transparent),
+      0 0 32px -4px color-mix(in srgb, var(--s7-accent) 40%, transparent),
+      inset 0 0 36px -12px color-mix(in srgb, var(--s7-accent) 16%, transparent);
+  }
+}
+
+/*
+ * Border halo — the same spinning conic-gradient glint that travels around
+ * the collapsed "// ASK S7" pill (.pill::before). Reuses the shared
+ * @property --s7-halo-angle and the pillHaloSpin 3.6s linear keyframe so the
+ * cards and the pill share one effect. Additive: it rides the card border
+ * while the breathing glow (::card box-shadow) and corner brackets (::after)
+ * layer underneath/on top. Desktop only — see the @media block below.
+ * No overflow:hidden: this is a border ring (inset -1px), not a surface sweep.
+ */
+@media (min-width: 768px) {
+  .callCard.callCardGlow::before {
+    content: '';
+    position: absolute;
+    inset: -1px;
+    border-radius: 11px; /* card radius (10px) + 1px inset */
+    padding: 1px;
+    background: conic-gradient(
+      from var(--s7-halo-angle),
+      rgba(4, 227, 238, 0) 0deg,
+      rgba(4, 227, 238, 0) 280deg,
+      var(--s7-accent) 340deg,
+      #ffffff 360deg,
+      var(--s7-accent) 380deg,
+      rgba(4, 227, 238, 0) 440deg,
+      rgba(4, 227, 238, 0) 720deg
+    );
+    -webkit-mask:
+      linear-gradient(#000 0 0) content-box,
+      linear-gradient(#000 0 0);
+    -webkit-mask-composite: xor;
+    mask:
+      linear-gradient(#000 0 0) content-box,
+      linear-gradient(#000 0 0);
+    mask-composite: exclude;
+    animation: pillHaloSpin 3.6s linear infinite;
+    pointer-events: none;
+  }
+
+  /* Stagger the second card (Card B) by half a cycle so the two glints
+     don't orbit in lockstep. */
+  .callCard.callCardGlow:nth-of-type(2)::before {
+    animation-delay: 1.8s;
+  }
+}
+
+.callCardIcon {
+  flex-shrink: 0;
+  width: 34px;
+  height: 34px;
+  border-radius: 8px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--s7-surface-2);
+  border: 1px solid var(--s7-border);
+  color: var(--s7-accent);
+}
+
+.callCardText {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  min-width: 0;
+}
+
+.callCardLabel {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-family: var(--s7-sans);
+  font-size: 14px;
+  color: var(--s7-fg);
+}
+
+.callCardSub {
+  font-family: var(--s7-sans);
+  font-size: 11px;
+  line-height: 1.4;
+  color: var(--s7-fg-muted);
+}
+
+.callCardSubMono {
+  font-family: var(--s7-mono);
+  letter-spacing: 0.06em;
+  color: var(--s7-accent);
+}
+
+.copiedToast {
+  font-family: var(--s7-mono);
+  font-size: 9px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--s7-green);
+  border: 1px solid color-mix(in srgb, var(--s7-green) 40%, transparent);
+  border-radius: 4px;
+  padding: 1px 6px;
+}
+
+/* --- Get-a-call form --- */
+.callForm {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  width: 100%;
+  max-width: 320px;
+}
+
+.callFormRow {
+  display: flex;
+  gap: 8px;
+}
+
+.callCode {
+  flex-shrink: 0;
+  background: var(--s7-surface);
+  border: 1px solid var(--s7-border);
+  border-radius: 8px;
+  color: var(--s7-fg);
+  font-family: var(--s7-mono);
+  font-size: 13px;
+  padding: 0 8px;
+  cursor: pointer;
+  outline: none;
+}
+
+.callCode:focus {
+  border-color: var(--s7-border-strong);
+}
+
+.callPhoneInput {
+  flex: 1;
+  min-width: 0;
+  background: var(--s7-surface);
+  border: 1px solid var(--s7-border);
+  border-radius: 8px;
+  color: var(--s7-fg);
+  font-family: var(--s7-mono);
+  font-size: 13px;
+  padding: 10px 12px;
+  outline: none;
+}
+
+.callPhoneInput::placeholder {
+  color: var(--s7-fg-dim);
+}
+
+.callPhoneInput:focus {
+  border-color: var(--s7-border-strong);
+}
+
+.callSubmit {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  background: var(--s7-accent);
+  border: none;
+  border-radius: 8px;
+  padding: 11px 14px;
+  font-family: var(--s7-mono);
+  font-size: 11px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: #04181b;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.callSubmit:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.callSpinner {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  border: 2px solid rgba(4, 24, 27, 0.35);
+  border-top-color: #04181b;
+  animation: callSpin 0.7s linear infinite;
+}
+
+@keyframes callSpin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.callFormError {
+  font-family: var(--s7-mono);
+  font-size: 11px;
+  line-height: 1.5;
+  color: #ff8b8b;
+  text-wrap: pretty;
+}
+
+.voiceBack {
+  align-self: center;
+  background: transparent;
+  border: none;
+  padding: 4px;
+  font-family: var(--s7-mono);
+  font-size: 10px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--s7-fg-muted);
+  cursor: pointer;
+}
+
+.voiceBack:hover {
+  color: var(--s7-fg);
+}
+
+.voiceBack:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+/* --- Get-a-call success --- */
+.callSuccess {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+  width: 100%;
+  max-width: 320px;
+  text-align: center;
+}
+
+.callRing {
+  position: relative;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: var(--s7-accent-dim);
+}
+
+.callRing::before,
+.callRing::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  border: 1px solid var(--s7-accent);
+  animation: callPing 1.8s ease-out infinite;
+}
+
+.callRing::after {
+  animation-delay: 0.9s;
+}
+
+@keyframes callPing {
+  0% {
+    transform: scale(1);
+    opacity: 0.7;
+  }
+  100% {
+    transform: scale(2.2);
+    opacity: 0;
+  }
+}
+
+.callSuccessText {
+  font-family: var(--s7-sans);
+  font-size: 13px;
+  line-height: 1.5;
+  color: var(--s7-fg);
+  text-wrap: pretty;
+}
+
+@keyframes orbBreatheLg {
+  0%,
+  100% {
+    box-shadow: 0 0 40px var(--s7-accent-glow);
+  }
+  50% {
+    box-shadow: 0 0 64px var(--s7-accent-glow);
+  }
+}
+
+@keyframes orbBreatheActive {
+  0%,
+  100% {
+    box-shadow: 0 0 60px var(--s7-accent-glow);
+  }
+  50% {
+    box-shadow: 0 0 90px rgba(4, 227, 238, 0.5);
+  }
+}
+
+.voicePrompt {
+  font-family: var(--s7-mono);
+  font-size: 11px;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--s7-fg-muted);
+  text-align: center;
+}
+
+.voiceTimer {
+  font-family: var(--s7-mono);
+  font-size: 13px;
+  color: var(--s7-fg-muted);
+}
+
+.voiceError {
+  font-family: var(--s7-mono);
+  font-size: 11px;
+  line-height: 1.5;
+  color: #ff8b8b;
+  text-align: center;
+  max-width: 28ch;
+  margin-top: 4px;
+  text-wrap: pretty;
+}
+
+.voiceStatusText {
+  font-family: var(--s7-mono);
+  font-size: 10px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--s7-accent);
+}
+
+.voiceStartBtn {
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  background: transparent;
+  border: 1px solid var(--s7-accent-dim);
+  color: var(--s7-accent);
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition:
+    border-color 160ms ease,
+    box-shadow 160ms ease;
+}
+
+.voiceStartBtn:hover {
+  border-color: rgba(4, 227, 238, 0.5);
+  box-shadow: 0 0 20px rgba(4, 227, 238, 0.2);
+}
+
+.voiceEndBtn {
+  background: rgba(239, 68, 68, 0.15);
+  border-color: rgba(239, 68, 68, 0.3);
+  color: #ef4444;
+}
+
+.voiceEndBtn:hover {
+  border-color: rgba(239, 68, 68, 0.6);
+  box-shadow: 0 0 20px rgba(239, 68, 68, 0.2);
+}
+
+.voiceRetry {
+  background: transparent;
+  border: 1px solid var(--s7-border-strong);
+  border-radius: 8px;
+  padding: 8px 14px;
+  font-family: var(--s7-mono);
+  font-size: 10px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--s7-accent);
+  cursor: pointer;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .orb,
+  .caret,
+  .voiceOrb,
+  .voiceOrbActive {
+    animation: none;
+  }
+
+  /* Keep the static cyan glow on the option cards, drop the breathing. */
+  .callCard.callCardGlow {
+    animation: none;
+  }
+
+  /* Remove the spinning border halo entirely (no glint). */
+  .callCard.callCardGlow::before {
+    animation: none;
+    background: none;
+  }
+
+  /* Keep the success state visible, just drop the ring + spinner motion. */
+  .callRing::before,
+  .callRing::after,
+  .callSpinner {
+    animation: none;
+  }
+}
+
+@media (max-width: 640px) {
+  .root {
+    bottom: 14px;
+    right: 14px;
+    max-width: calc(100vw - 28px);
+  }
+
+  .bubble {
+    gap: 0;
+  }
+
+  .orb {
+    width: 48px;
+    height: 48px;
+    position: relative;
+  }
+
+  .orb::before {
+    content: '';
+    position: absolute;
+    inset: -3px;
+    border-radius: 50%;
+    padding: 1px;
+    background: conic-gradient(
+      from var(--s7-halo-angle),
+      rgba(4, 227, 238, 0) 0deg,
+      rgba(4, 227, 238, 0) 280deg,
+      var(--s7-accent) 340deg,
+      #ffffff 360deg,
+      var(--s7-accent) 380deg,
+      rgba(4, 227, 238, 0) 440deg,
+      rgba(4, 227, 238, 0) 720deg
+    );
+    -webkit-mask:
+      linear-gradient(#000 0 0) content-box,
+      linear-gradient(#000 0 0);
+    -webkit-mask-composite: xor;
+    mask:
+      linear-gradient(#000 0 0) content-box,
+      linear-gradient(#000 0 0);
+    mask-composite: exclude;
+    animation: pillHaloSpin 3.6s linear infinite;
+    pointer-events: none;
+  }
+
+  .pill {
+    display: none;
+  }
+
+  .rootOpen {
+    top: 8px;
+    right: 8px;
+    bottom: 8px;
+    left: 8px;
+    max-width: none;
+  }
+
+  .panel {
+    width: 100%;
+    height: 100%;
+    max-width: 100vw;
+    max-height: 100vh;
+  }
+  @supports (height: 100dvh) {
+    .panel {
+      height: 100dvh;
+      max-height: 100dvh;
+    }
+  }
+
+  /* iOS Safari auto-zooms any input < 16px on focus. Bump the chat field
+     up; the keystroke prompt and other monospace UI stay at desktop sizes. */
+  .field,
+  .callPhoneInput,
+  .callCode {
+    font-size: 16px;
+  }
+
+  .callOptions,
+  .callForm,
+  .callSuccess {
+    max-width: 100%;
+  }
+
+  .header {
+    padding: 12px 14px;
+  }
+
+  .bubbleBody {
+    max-width: 85%;
+  }
+
+  .iconBtn {
+    min-width: 36px;
+    min-height: 36px;
+  }
+
+  .modeBtn {
+    min-height: 36px;
+    padding: 8px 0;
+  }
+
+  .send {
+    width: 40px;
+    height: 40px;
+  }
+
+  .footer {
+    font-size: 8.5px;
+  }
+}

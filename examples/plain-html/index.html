@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <title>S7 Voice Widget — plain HTML demo</title>
+    <style>
+      body {
+        margin: 0;
+        min-height: 100vh;
+        background: #0b0b10;
+        color: #ededed;
+        font-family: ui-sans-serif, system-ui, sans-serif;
+        display: grid;
+        place-items: center;
+      }
+      .hint {
+        max-width: 440px;
+        text-align: center;
+        line-height: 1.6;
+        opacity: 0.8;
+      }
+      code {
+        font-family: ui-monospace, Menlo, monospace;
+        color: #04e3ee;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="hint">
+      <p>Any plain website. The cyan widget in the bottom-right is the embed.</p>
+      <p>
+        Chat &amp; in-browser voice work with just <code>data-agent-id</code>.<br />
+        "Get a call" also needs <code>data-api-base</code> pointing at your backend.
+      </p>
+    </div>
+
+    <!--
+      ONE TAG TO EMBED. Replace agent-id with your ElevenLabs public agent id.
+      For get-a-call, set data-api-base to your deployed outbound-call backend.
+      data-public-phone and data-accent are optional.
+    -->
+    <script
+      src="../../dist/s7-voice-widget.js"
+      data-agent-id="agent_5001kqewjaz5f6pan59eewfy5qq7"
+      data-api-base=""
+      data-public-phone=""
+      data-accent="#04e3ee"
+    ></script>
+  </body>
+</html>
