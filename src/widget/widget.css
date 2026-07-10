@@ -31,6 +31,12 @@
   --s7-accent-dim: rgba(4, 227, 238, 0.18);
   --s7-accent-glow: rgba(4, 227, 238, 0.35);
   --s7-green: #4fcf8a;
+  /* Panel background + the shared orb gradient (launcher, header, avatar,
+     voice pane). Overridable at embed time via data-bg / data-button-bg —
+     the component sets these vars inline on .root, which wins over the
+     defaults below. */
+  --s7-panel-bg: linear-gradient(180deg, #0b0b10, #070709);
+  --s7-orb-bg: radial-gradient(circle at 32% 28%, #bffafe 0%, #04e3ee 36%, #0ab3ce 68%, #06212f 100%);
   --s7-mono: var(--font-mono), ui-monospace, 'SF Mono', Menlo, monospace;
   --s7-sans: var(--font-sans), ui-sans-serif, system-ui, sans-serif;
 
@@ -63,13 +69,7 @@
   width: 56px;
   height: 56px;
   border-radius: 50%;
-  background: radial-gradient(
-    circle at 32% 28%,
-    #bffafe 0%,
-    #04e3ee 36%,
-    #0ab3ce 68%,
-    #06212f 100%
-  );
+  background: var(--s7-orb-bg);
   box-shadow: 0 0 22px var(--s7-accent-glow);
   animation: orbBreathe 4.2s ease-in-out infinite;
   flex-shrink: 0;
@@ -151,7 +151,7 @@
 .panel {
   width: 400px;
   height: 580px;
-  background: linear-gradient(180deg, #0b0b10, #070709);
+  background: var(--s7-panel-bg);
   border: 1px solid var(--s7-border-strong);
   border-radius: 14px;
   box-shadow:
@@ -205,13 +205,7 @@
   width: 20px;
   height: 20px;
   border-radius: 50%;
-  background: radial-gradient(
-    circle at 32% 28%,
-    #bffafe 0%,
-    #04e3ee 36%,
-    #0ab3ce 68%,
-    #06212f 100%
-  );
+  background: var(--s7-orb-bg);
   box-shadow: 0 0 8px var(--s7-accent-glow);
 }
 
@@ -309,13 +303,7 @@
   height: 26px;
   border-radius: 50%;
   flex-shrink: 0;
-  background: radial-gradient(
-    circle at 32% 28%,
-    #bffafe 0%,
-    #04e3ee 36%,
-    #0ab3ce 68%,
-    #06212f 100%
-  );
+  background: var(--s7-orb-bg);
   box-shadow: 0 0 8px var(--s7-accent-glow);
 }
 
@@ -445,6 +433,15 @@
   cursor: not-allowed;
 }
 
+/* Applied only when a custom `data-cta` label is set, so text longer than the
+   stock "▸" glyph gets room instead of clipping. The default fixed-width
+   square above stays untouched for stock embeds. */
+.sendWide {
+  width: auto;
+  min-width: 34px;
+  padding: 0 12px;
+}
+
 /* Footer */
 .footer {
   display: flex;
@@ -505,13 +502,7 @@
   width: 120px;
   height: 120px;
   border-radius: 50%;
-  background: radial-gradient(
-    circle at 32% 28%,
-    #bffafe 0%,
-    #04e3ee 36%,
-    #0ab3ce 68%,
-    #06212f 100%
-  );
+  background: var(--s7-orb-bg);
   box-shadow: 0 0 40px var(--s7-accent-glow);
   animation: orbBreatheLg 4.2s ease-in-out infinite;
 }
@@ -1134,6 +1125,11 @@
   .send {
     width: 40px;
     height: 40px;
+  }
+
+  .send.sendWide {
+    width: auto;
+    min-width: 40px;
   }
 
   .footer {

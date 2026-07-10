@@ -9,19 +9,59 @@ import widgetCss from './widget/widget.css?inline'
 const TAG = 's7-voice-widget'
 
 function readConfig(el: HTMLElement): WidgetConfig {
+  // Text/color attributes are optional: empty or missing -> undefined, and the
+  // widget falls back to its stock value. Values render as plain text (React
+  // text nodes) or CSS variable values — never as HTML.
+  const attr = (name: string) => el.getAttribute(name)?.trim() || undefined
   return {
     agentId: el.getAttribute('agent-id')?.trim() ?? '',
     apiBase: (el.getAttribute('api-base') ?? '').replace(/\/$/, ''),
     publicPhone: el.getAttribute('public-phone') ?? '',
     enabled: el.getAttribute('enabled') !== 'false',
+    // Text. `widget-title` (not `title`, which is the global tooltip attribute).
+    title: attr('widget-title'),
+    greeting: attr('greeting'),
+    buttonLabel: attr('button-label'),
+    placeholder: attr('placeholder'),
+    cta: attr('cta'),
+    // Colors.
+    accent: attr('accent'),
+    bg: attr('bg'),
+    textColor: attr('text'),
+    buttonBg: attr('button-bg'),
   }
 }
 
 /**
- * `<s7-voice-widget agent-id="agent_..." api-base="https://..." public-phone="+1..." accent="#04e3ee">`
+ * `data-*` keys on the loader <script> (camelCase, as exposed by `dataset`)
+ * and the corresponding attribute on the <s7-voice-widget> element.
+ * `data-title` maps to `widget-title` because bare `title` is the global
+ * HTML tooltip attribute.
+ */
+const SCRIPT_DATA_ATTRS: ReadonlyArray<readonly [string, string]> = [
+  ['apiBase', 'api-base'],
+  ['publicPhone', 'public-phone'],
+  ['enabled', 'enabled'],
+  ['title', 'widget-title'],
+  ['greeting', 'greeting'],
+  ['buttonLabel', 'button-label'],
+  ['placeholder', 'placeholder'],
+  ['cta', 'cta'],
+  ['accent', 'accent'],
+  ['bg', 'bg'],
+  ['text', 'text'],
+  ['buttonBg', 'button-bg'],
+]
+
+/**
+ * `<s7-voice-widget agent-id="agent_..." api-base="https://..." public-phone="+1..."
+ *    widget-title="ACME // AI" greeting="Hi!" button-label="// ASK ACME"
+ *    placeholder="ask anything_" cta="Send"
+ *    accent="#04e3ee" bg="#070709" text="#ededed" button-bg="#04e3ee">`
  *
- * Renders the floating chat/voice widget inside an isolated Shadow DOM so the
- * host page's CSS can neither break it nor be broken by it.
+ * All attributes except `agent-id` are optional. Renders the floating
+ * chat/voice widget inside an isolated Shadow DOM so the host page's CSS can
+ * neither break it nor be broken by it.
  */
 class S7VoiceWidgetElement extends HTMLElement {
   private root: Root | null = null
@@ -34,15 +74,9 @@ class S7VoiceWidgetElement extends HTMLElement {
     style.textContent = widgetCss
     shadow.appendChild(style)
 
-    // Optional accent override. The widget keys its theme off `--s7-accent`;
-    // setting it on `.root` would lose to the value `.root` defines itself, so
-    // we append a higher-specificity override only when an accent is supplied.
-    const accent = this.getAttribute('accent')?.trim()
-    if (accent) {
-      const override = document.createElement('style')
-      override.textContent = `.root{--s7-accent:${accent};--s7-accent-dim:color-mix(in srgb, ${accent} 18%, transparent);--s7-accent-glow:color-mix(in srgb, ${accent} 35%, transparent);}`
-      shadow.appendChild(override)
-    }
+    // Color overrides (accent, bg, text, button-bg) are applied by the widget
+    // itself: it sets the corresponding CSS variables inline on its `.root`,
+    // which beats the defaults `.root` declares in widget.css.
 
     const mount = document.createElement('div')
     shadow.appendChild(mount)
@@ -75,7 +109,10 @@ if (typeof customElements !== 'undefined' && !customElements.get(TAG)) {
  *           data-agent-id="agent_..."
  *           data-api-base="https://your-backend.example.com"
  *           data-public-phone="+1..."
- *           data-accent="#04e3ee"></script>
+ *           data-title="ACME // AI" data-greeting="Hi! How can we help?"
+ *           data-button-label="// ASK ACME" data-placeholder="ask anything_"
+ *           data-cta="Send" data-accent="#7c5cff" data-bg="#0d0a1a"
+ *           data-text="#f2eeff" data-button-bg="#7c5cff"></script>
  */
 function autoMount() {
   const current =
@@ -86,10 +123,10 @@ function autoMount() {
 
   const el = document.createElement(TAG)
   el.setAttribute('agent-id', current.dataset.agentId)
-  if (current.dataset.apiBase) el.setAttribute('api-base', current.dataset.apiBase)
-  if (current.dataset.publicPhone) el.setAttribute('public-phone', current.dataset.publicPhone)
-  if (current.dataset.accent) el.setAttribute('accent', current.dataset.accent)
-  if (current.dataset.enabled) el.setAttribute('enabled', current.dataset.enabled)
+  for (const [dataKey, attrName] of SCRIPT_DATA_ATTRS) {
+    const value = current.dataset[dataKey]
+    if (value) el.setAttribute(attrName, value)
+  }
 
   const append = () => document.body.appendChild(el)
   if (document.body) append()

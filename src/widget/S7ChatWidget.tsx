@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { ConversationProvider, useConversation } from '@elevenlabs/react'
 
-import { OUTBOUND_CALL_PATH, type WidgetConfig } from './config'
+import { OUTBOUND_CALL_PATH, TEXT_DEFAULTS, type WidgetConfig } from './config'
 
 /**
  * Class-name accessor. The widget's CSS (widget.css) is injected into the host
@@ -52,6 +52,60 @@ function formatDuration(seconds: number) {
 
 function makeId() {
   return `${Date.now()}-${Math.random().toString(36).slice(2, 8)}`
+}
+
+/**
+ * Accept any valid CSS color, drop anything else. Values land in inline
+ * `style` custom properties (never innerHTML), so this guards against broken
+ * styling rather than injection — but embedders pass arbitrary attribute
+ * strings, so validate anyway.
+ */
+function sanitizeColor(value?: string): string | undefined {
+  const v = value?.trim()
+  if (!v) return undefined
+  if (typeof CSS !== 'undefined' && typeof CSS.supports === 'function') {
+    if (CSS.supports('color', v)) return v
+    console.warn(`[S7ChatWidget] ignoring invalid color value: "${v}"`)
+    return undefined
+  }
+  // No CSS.supports available: allow plain color-ish tokens only.
+  return /^[#a-zA-Z0-9(),.%\s-]+$/.test(v) ? v : undefined
+}
+
+/**
+ * Embed-time color overrides as CSS custom properties, applied inline on the
+ * widget root. widget.css defines the defaults on `.root`; inline styles win,
+ * and custom properties cascade to everything inside — so one variable drives
+ * every use of that color. Returns undefined when nothing is overridden, so a
+ * stock embed renders exactly as before.
+ */
+function themeVars(config: WidgetConfig): React.CSSProperties | undefined {
+  const vars: Record<string, string> = {}
+
+  const accent = sanitizeColor(config.accent)
+  if (accent) {
+    vars['--s7-accent'] = accent
+    vars['--s7-accent-dim'] = `color-mix(in srgb, ${accent} 18%, transparent)`
+    vars['--s7-accent-glow'] = `color-mix(in srgb, ${accent} 35%, transparent)`
+  }
+
+  const bg = sanitizeColor(config.bg)
+  if (bg) vars['--s7-panel-bg'] = bg
+
+  const fg = sanitizeColor(config.textColor)
+  if (fg) vars['--s7-fg'] = fg
+
+  // The orb gradient (launcher button, header dot, avatar, voice orb) keys
+  // off `buttonBg`, falling back to the accent per the theming contract.
+  const orb = sanitizeColor(config.buttonBg) ?? accent
+  if (orb) {
+    vars['--s7-orb-bg'] =
+      `radial-gradient(circle at 32% 28%, ` +
+      `color-mix(in srgb, ${orb} 30%, #ffffff) 0%, ${orb} 36%, ` +
+      `color-mix(in srgb, ${orb} 55%, #06212f) 68%, #06212f 100%)`
+  }
+
+  return Object.keys(vars).length ? (vars as React.CSSProperties) : undefined
 }
 
 export function S7ChatWidget({ config }: { config: WidgetConfig }) {
@@ -108,17 +162,21 @@ export function S7ChatWidget({ config }: { config: WidgetConfig }) {
 
   if (!open) {
     return (
-      <div className={styles.root}>
+      <div className={styles.root} style={themeVars(config)}>
         <button
           type="button"
           className={styles.bubble}
           onClick={() => setOpen(true)}
-          aria-label="Open S7 chat"
+          aria-label={config.title ? `Open ${config.title} chat` : 'Open S7 chat'}
         >
           <span className={styles.orb} aria-hidden />
           <span className={styles.pill}>
-            {'// ASK S'}
-            <sup className="wordmark-superscript">7</sup>{' '}
+            {config.buttonLabel ?? (
+              <>
+                {'// ASK S'}
+                <sup className="wordmark-superscript">7</sup>
+              </>
+            )}{' '}
             <span className={styles.pillArrow}>→</span>
           </span>
         </button>
@@ -167,7 +225,13 @@ function S7ChatPanel({
   const PUBLIC_PHONE = config.publicPhone
 
   const [mode, setMode] = useState<Mode>('chat')
-  const [messages, setMessages] = useState<ChatMessage[]>([])
+  // Optional embed-time greeting, seeded as the first assistant message.
+  // Absent (the default) the chat starts empty, as it always has.
+  const [messages, setMessages] = useState<ChatMessage[]>(() =>
+    config.greeting
+      ? [{ id: makeId(), role: 'ai', text: config.greeting, timestamp: formatTimestamp(new Date()) }]
+      : []
+  )
   const [input, setInput] = useState('')
   const [isWaiting, setIsWaiting] = useState(false)
   const [errorMsg, setErrorMsg] = useState<string | null>(null)
@@ -476,15 +540,19 @@ function S7ChatPanel({
   }
 
   return (
-    <div className={`${styles.root} ${styles.rootOpen}`}>
-      <div className={styles.panel} role="dialog" aria-label="S7 Labs AI">
+    <div className={`${styles.root} ${styles.rootOpen}`} style={themeVars(config)}>
+      <div className={styles.panel} role="dialog" aria-label={config.title || 'S7 Labs AI'}>
         <div className={styles.header}>
           <div className={styles.headerLeft}>
             <div className={styles.headerLabelRow}>
               <span className={styles.miniOrb} aria-hidden />
               <span className={styles.headerLabel}>
-                S<sup className="wordmark-superscript">7</sup>
-                {' LABS // AI'}
+                {config.title ?? (
+                  <>
+                    S<sup className="wordmark-superscript">7</sup>
+                    {' LABS // AI'}
+                  </>
+                )}
               </span>
             </div>
             <div className={styles.statusLine}>
@@ -601,7 +669,7 @@ function S7ChatPanel({
                 value={input}
                 onChange={(e) => setInput(e.target.value)}
                 onKeyDown={handleKeyDown}
-                placeholder="type your question_"
+                placeholder={config.placeholder ?? TEXT_DEFAULTS.placeholder}
                 aria-label="Chat input"
                 autoComplete="off"
                 autoCorrect="off"
@@ -610,12 +678,12 @@ function S7ChatPanel({
               />
               <button
                 type="button"
-                className={styles.send}
+                className={`${styles.send} ${config.cta ? styles.sendWide : ''}`}
                 onClick={handleSend}
                 disabled={!input.trim() || isWaiting}
                 aria-label="Send message"
               >
-                ▸
+                {config.cta ?? TEXT_DEFAULTS.cta}
               </button>
             </div>
           </>
