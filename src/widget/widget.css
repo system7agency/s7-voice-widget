@@ -78,20 +78,25 @@
 }
 
 /*
- * A small glowing white dot that orbits the blob's edge. A full-size layer
- * (inset -2px, so the dot rides just on the perimeter) carries the dot at its
- * top-center via a radial-gradient, and the whole layer rotates — so the dot
- * travels 360° around the circle. Reused (larger) on the voice orb below.
+ * A thin white track ring sitting just outside the blob, with a small glowing
+ * white dot that travels along it. The ring is the `border` of a full-size
+ * rotating layer; the dot is a radial-gradient painted at the layer's
+ * top-center. Rotating the layer moves the dot around the (visually static,
+ * because uniform) ring. `background-origin: border-box` seats the dot on the
+ * ring line. Reused (larger) on the voice orb below.
  */
 .orb::after {
   content: '';
   position: absolute;
-  inset: -2px;
+  inset: -3px;
+  box-sizing: border-box;
   border-radius: 50%;
+  border: 1px solid color-mix(in srgb, #fff 22%, transparent);
   pointer-events: none;
   background:
     radial-gradient(circle 6px at 50% 0%, color-mix(in srgb, #fff 55%, transparent) 0%, transparent 70%),
     radial-gradient(circle 3.2px at 50% 0%, #fff 0%, #fff 45%, transparent 72%);
+  background-origin: border-box;
   animation: s7Orbit 7s linear infinite;
 }
 
@@ -538,16 +543,19 @@
   animation: orbBreatheLg 4.2s ease-in-out infinite;
 }
 
-/* Same orbiting white dot as the launcher blob (.orb::after), scaled up. */
+/* Same track ring + orbiting dot as the launcher blob, scaled up. */
 .voiceOrb::after {
   content: '';
   position: absolute;
-  inset: -3px;
+  inset: -5px;
+  box-sizing: border-box;
   border-radius: 50%;
+  border: 1px solid color-mix(in srgb, #fff 22%, transparent);
   pointer-events: none;
   background:
     radial-gradient(circle 10px at 50% 0%, color-mix(in srgb, #fff 55%, transparent) 0%, transparent 70%),
     radial-gradient(circle 5px at 50% 0%, #fff 0%, #fff 45%, transparent 72%);
+  background-origin: border-box;
   animation: s7Orbit 7s linear infinite;
 }
 
