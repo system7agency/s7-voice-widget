@@ -35,7 +35,17 @@
      the component sets these vars inline on .root, which wins over the
      defaults below. */
   --s7-panel-bg: linear-gradient(180deg, #08080d, #000000);
-  --s7-orb-bg: rgb(0, 9, 255);
+  /*
+   * Glossy blue glass sphere: a top glass sheen over a specular-lit body
+   * (bright #fff highlight → electric-blue #0009ff core → deep-navy rim).
+   * The bright highlight + dark rim give the blob luminance contrast so it
+   * reads as a solid object on BOTH the black hero and the site's blue
+   * footer glow — a flat fill would dissolve into that glow. Background-only
+   * (no box-shadow) so the breathing glow animation can't wipe it.
+   */
+  --s7-orb-bg:
+    radial-gradient(90% 55% at 50% 5%, rgba(255, 255, 255, 0.42) 0%, rgba(255, 255, 255, 0) 46%),
+    radial-gradient(circle at 33% 27%, #ffffff 0%, #ccd1ff 6%, #2a38ff 40%, #0009ff 60%, #00093f 84%, #00020c 100%);
   /* system7.ai uses Articulat CF; fall back to a geometric-sans stack. Both
      tokens point at the same sans so the terminal/monospace look is gone. */
   --s7-sans: var(--font-sans), ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;

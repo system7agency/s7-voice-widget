@@ -97,12 +97,17 @@ function themeVars(config: WidgetConfig): React.CSSProperties | undefined {
 
   // The orb gradient (launcher button, header dot, avatar, voice orb) keys
   // off `buttonBg`, falling back to the accent per the theming contract.
+  // Glossy glass sphere: a top sheen over a specular-lit body (white
+  // highlight → accent core → dark rim), matching the default look while
+  // adapting to any override color. See --s7-orb-bg in widget.css.
   const orb = sanitizeColor(config.buttonBg) ?? accent
   if (orb) {
     vars['--s7-orb-bg'] =
-      `radial-gradient(circle at 32% 28%, ` +
-      `color-mix(in srgb, ${orb} 30%, #ffffff) 0%, ${orb} 36%, ` +
-      `color-mix(in srgb, ${orb} 55%, #00021a) 68%, #00021a 100%)`
+      `radial-gradient(90% 55% at 50% 5%, rgba(255,255,255,0.42) 0%, rgba(255,255,255,0) 46%), ` +
+      `radial-gradient(circle at 33% 27%, #ffffff 0%, ` +
+      `color-mix(in srgb, ${orb} 30%, #ffffff) 7%, ` +
+      `color-mix(in srgb, ${orb} 80%, #ffffff) 40%, ${orb} 60%, ` +
+      `color-mix(in srgb, ${orb} 55%, #000000) 84%, color-mix(in srgb, ${orb} 22%, #000000) 100%)`
   }
 
   return Object.keys(vars).length ? (vars as React.CSSProperties) : undefined
