@@ -67,6 +67,7 @@
 }
 
 .orb {
+  position: relative;
   width: 56px;
   height: 56px;
   border-radius: 50%;
@@ -74,6 +75,30 @@
   box-shadow: 0 0 22px var(--s7-accent-glow);
   animation: orbBreathe 4.2s ease-in-out infinite;
   flex-shrink: 0;
+}
+
+/*
+ * A small glowing white dot that orbits the blob's edge. A full-size layer
+ * (inset -2px, so the dot rides just on the perimeter) carries the dot at its
+ * top-center via a radial-gradient, and the whole layer rotates — so the dot
+ * travels 360° around the circle. Reused (larger) on the voice orb below.
+ */
+.orb::after {
+  content: '';
+  position: absolute;
+  inset: -2px;
+  border-radius: 50%;
+  pointer-events: none;
+  background:
+    radial-gradient(circle 6px at 50% 0%, color-mix(in srgb, #fff 55%, transparent) 0%, transparent 70%),
+    radial-gradient(circle 3.2px at 50% 0%, #fff 0%, #fff 45%, transparent 72%);
+  animation: s7Orbit 7s linear infinite;
+}
+
+@keyframes s7Orbit {
+  to {
+    transform: rotate(360deg);
+  }
 }
 
 @keyframes orbBreathe {
@@ -504,12 +529,26 @@
 }
 
 .voiceOrb {
+  position: relative;
   width: 120px;
   height: 120px;
   border-radius: 50%;
   background: var(--s7-orb-bg);
   box-shadow: 0 0 40px var(--s7-accent-glow);
   animation: orbBreatheLg 4.2s ease-in-out infinite;
+}
+
+/* Same orbiting white dot as the launcher blob (.orb::after), scaled up. */
+.voiceOrb::after {
+  content: '';
+  position: absolute;
+  inset: -3px;
+  border-radius: 50%;
+  pointer-events: none;
+  background:
+    radial-gradient(circle 10px at 50% 0%, color-mix(in srgb, #fff 55%, transparent) 0%, transparent 70%),
+    radial-gradient(circle 5px at 50% 0%, #fff 0%, #fff 45%, transparent 72%);
+  animation: s7Orbit 7s linear infinite;
 }
 
 .voiceOrbActive {
@@ -999,6 +1038,11 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
+  .orb::after,
+  .voiceOrb::after {
+    animation: none;
+  }
+
   .orb,
   .caret,
   .voiceOrb,
