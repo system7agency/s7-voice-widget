@@ -185,7 +185,7 @@
 }
 
 .pillArrow {
-  color: var(--s7-accent);
+  color: var(--s7-fg);
 }
 
 /* --- Expanded panel --- */
