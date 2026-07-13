@@ -57,7 +57,7 @@ const SCRIPT_DATA_ATTRS: ReadonlyArray<readonly [string, string]> = [
  * `<s7-voice-widget agent-id="agent_..." api-base="https://..." public-phone="+1..."
  *    widget-title="ACME // AI" greeting="Hi!" button-label="// ASK ACME"
  *    placeholder="ask anything_" cta="Send"
- *    accent="#04e3ee" bg="#070709" text="#ededed" button-bg="#04e3ee">`
+ *    accent="#0009ff" bg="#000000" text="#ffffff" button-bg="#0009ff">`
  *
  * All attributes except `agent-id` are optional. Renders the floating
  * chat/voice widget inside an isolated Shadow DOM so the host page's CSS can

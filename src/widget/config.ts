@@ -60,8 +60,8 @@ export type WidgetConfig = {
  * component when unset, and `greeting` defaults to no message at all.
  */
 export const TEXT_DEFAULTS = {
-  placeholder: 'type your question_',
-  cta: '▸',
+  placeholder: 'Ask anything…',
+  cta: '→',
 } as const
 
 /** The path the get-a-call backend is mounted at. Combined with `apiBase`. */

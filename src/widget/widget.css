@@ -1,14 +1,12 @@
 /*
  * S7 Voice Widget — styles.
  *
- * Ported verbatim from the s7labs S7ChatWidget.module.css. Because the widget
- * renders inside a Shadow DOM, these class names live in an isolated scope and
- * cannot collide with (or leak into) the host page. The design is byte-for-byte
- * identical to the original.
- *
- * The only addition vs. the source is `.wordmark-superscript` (previously a
- * sitewide global class in s7labs) so the "7" wordmark renders correctly in a
- * standalone context.
+ * Themed to match system7.ai: pure-black surfaces, white text, a single
+ * electric-blue (#0009ff) glow accent, and a clean geometric sans (no
+ * monospace). The widget renders inside a Shadow DOM, so these class names
+ * live in an isolated scope and cannot collide with (or leak into) the host
+ * page. Every color routes through a CSS variable on `.root` so an embed-time
+ * data-* override drives all uses of that color at once.
  */
 
 .wordmark-superscript {
@@ -18,27 +16,30 @@
 }
 
 .root {
-  --s7-bg: #060608;
-  --s7-surface: #101014;
-  --s7-surface-2: #16161b;
-  --s7-border: rgba(255, 255, 255, 0.07);
-  --s7-border-strong: rgba(255, 255, 255, 0.14);
-  --s7-fg: #ededed;
-  --s7-fg-muted: #8a8a8f;
-  --s7-fg-dim: #55555b;
-  --s7-fg-deep: #2a2a2e;
-  --s7-accent: #04e3ee;
-  --s7-accent-dim: rgba(4, 227, 238, 0.18);
-  --s7-accent-glow: rgba(4, 227, 238, 0.35);
-  --s7-green: #4fcf8a;
+  --s7-bg: #000000;
+  --s7-surface: #0a0a0f;
+  --s7-surface-2: #121219;
+  --s7-border: rgba(255, 255, 255, 0.09);
+  --s7-border-strong: rgba(255, 255, 255, 0.18);
+  --s7-fg: #ffffff;
+  --s7-fg-muted: #9b9ba6;
+  --s7-fg-dim: #5c5c68;
+  --s7-fg-deep: #2c2c36;
+  --s7-accent: #0009ff;
+  --s7-accent-dim: color-mix(in srgb, #0009ff 22%, transparent);
+  --s7-accent-glow: color-mix(in srgb, #0009ff 50%, transparent);
+  /* Kept for API compatibility; recolored to the accent so no green remains. */
+  --s7-green: #0009ff;
   /* Panel background + the shared orb gradient (launcher, header, avatar,
      voice pane). Overridable at embed time via data-bg / data-button-bg —
      the component sets these vars inline on .root, which wins over the
      defaults below. */
-  --s7-panel-bg: linear-gradient(180deg, #0b0b10, #070709);
-  --s7-orb-bg: radial-gradient(circle at 32% 28%, #bffafe 0%, #04e3ee 36%, #0ab3ce 68%, #06212f 100%);
-  --s7-mono: var(--font-mono), ui-monospace, 'SF Mono', Menlo, monospace;
-  --s7-sans: var(--font-sans), ui-sans-serif, system-ui, sans-serif;
+  --s7-panel-bg: linear-gradient(180deg, #08080d, #000000);
+  --s7-orb-bg: rgb(0, 9, 255);
+  /* system7.ai uses Articulat CF; fall back to a geometric-sans stack. Both
+     tokens point at the same sans so the terminal/monospace look is gone. */
+  --s7-sans: var(--font-sans), ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  --s7-mono: var(--s7-sans);
 
   position: fixed;
   bottom: 28px;
@@ -117,13 +118,13 @@
   padding: 1px;
   background: conic-gradient(
     from var(--s7-halo-angle),
-    rgba(4, 227, 238, 0) 0deg,
-    rgba(4, 227, 238, 0) 280deg,
+    transparent 0deg,
+    transparent 280deg,
     var(--s7-accent) 340deg,
     #ffffff 360deg,
     var(--s7-accent) 380deg,
-    rgba(4, 227, 238, 0) 440deg,
-    rgba(4, 227, 238, 0) 720deg
+    transparent 440deg,
+    transparent 720deg
   );
   -webkit-mask:
     linear-gradient(#000 0 0) content-box,
@@ -163,15 +164,19 @@
   position: relative;
 }
 
+/* Ambient blue glow bleeding from the top — echoes the hero glow on
+   system7.ai, replacing the old blueprint grid. */
 .panel::before {
   content: '';
   position: absolute;
   inset: 0;
   pointer-events: none;
-  background-image:
-    linear-gradient(rgba(255, 255, 255, 0.025) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(255, 255, 255, 0.025) 1px, transparent 1px);
-  background-size: 32px 32px;
+  background:
+    radial-gradient(
+      120% 60% at 50% -10%,
+      color-mix(in srgb, var(--s7-accent) 22%, transparent),
+      transparent 70%
+    );
   z-index: 0;
 }
 
@@ -418,7 +423,7 @@
   border-radius: 8px;
   background: var(--s7-accent);
   border: none;
-  color: #04181b;
+  color: #ffffff;
   font-family: var(--s7-mono);
   font-size: 14px;
   font-weight: 600;
@@ -642,13 +647,13 @@
     padding: 1px;
     background: conic-gradient(
       from var(--s7-halo-angle),
-      rgba(4, 227, 238, 0) 0deg,
-      rgba(4, 227, 238, 0) 280deg,
+      transparent 0deg,
+      transparent 280deg,
       var(--s7-accent) 340deg,
       #ffffff 360deg,
       var(--s7-accent) 380deg,
-      rgba(4, 227, 238, 0) 440deg,
-      rgba(4, 227, 238, 0) 720deg
+      transparent 440deg,
+      transparent 720deg
     );
     -webkit-mask:
       linear-gradient(#000 0 0) content-box,
@@ -787,7 +792,7 @@
   font-size: 11px;
   letter-spacing: 0.16em;
   text-transform: uppercase;
-  color: #04181b;
+  color: #ffffff;
   font-weight: 600;
   cursor: pointer;
 }
@@ -801,8 +806,8 @@
   width: 12px;
   height: 12px;
   border-radius: 50%;
-  border: 2px solid rgba(4, 24, 27, 0.35);
-  border-top-color: #04181b;
+  border: 2px solid rgba(255, 255, 255, 0.35);
+  border-top-color: #ffffff;
   animation: callSpin 0.7s linear infinite;
 }
 
@@ -910,7 +915,7 @@
     box-shadow: 0 0 60px var(--s7-accent-glow);
   }
   50% {
-    box-shadow: 0 0 90px rgba(4, 227, 238, 0.5);
+    box-shadow: 0 0 90px color-mix(in srgb, var(--s7-accent) 55%, transparent);
   }
 }
 
@@ -965,8 +970,8 @@
 }
 
 .voiceStartBtn:hover {
-  border-color: rgba(4, 227, 238, 0.5);
-  box-shadow: 0 0 20px rgba(4, 227, 238, 0.2);
+  border-color: color-mix(in srgb, var(--s7-accent) 55%, transparent);
+  box-shadow: 0 0 20px color-mix(in srgb, var(--s7-accent) 22%, transparent);
 }
 
 .voiceEndBtn {
@@ -1045,13 +1050,13 @@
     padding: 1px;
     background: conic-gradient(
       from var(--s7-halo-angle),
-      rgba(4, 227, 238, 0) 0deg,
-      rgba(4, 227, 238, 0) 280deg,
+      transparent 0deg,
+      transparent 280deg,
       var(--s7-accent) 340deg,
       #ffffff 360deg,
       var(--s7-accent) 380deg,
-      rgba(4, 227, 238, 0) 440deg,
-      rgba(4, 227, 238, 0) 720deg
+      transparent 440deg,
+      transparent 720deg
     );
     -webkit-mask:
       linear-gradient(#000 0 0) content-box,

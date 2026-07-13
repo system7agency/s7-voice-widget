@@ -8,8 +8,8 @@
       body {
         margin: 0;
         min-height: 100vh;
-        background: #0b0b10;
-        color: #ededed;
+        background: #000000;
+        color: #ffffff;
         font-family: ui-sans-serif, system-ui, sans-serif;
         display: grid;
         place-items: center;
@@ -22,13 +22,13 @@
       }
       code {
         font-family: ui-monospace, Menlo, monospace;
-        color: #04e3ee;
+        color: #6b78ff;
       }
     </style>
   </head>
   <body>
     <div class="hint">
-      <p>Any plain website. The cyan widget in the bottom-right is the embed.</p>
+      <p>Any plain website. The blue widget in the bottom-right is the embed.</p>
       <p>
         Chat &amp; in-browser voice work with just <code>data-agent-id</code>.<br />
         "Get a call" also needs <code>data-api-base</code> pointing at your backend.
@@ -37,18 +37,14 @@
 
     <!--
       ONE TAG TO EMBED. Replace agent-id with your ElevenLabs public agent id.
-      For get-a-call, set data-api-base to your deployed outbound-call backend.
-      Everything else is optional — text (data-title, data-greeting,
-      data-button-label, data-placeholder, data-cta) and colors (data-accent,
-      data-bg, data-text, data-button-bg) default to the stock S7 theme.
-      See the README for the full attribute table.
+      It ships with the system7.ai look by default — nothing else required.
+      For get-a-call, add data-api-base pointing at your outbound-call backend.
+      To re-theme per site, add optional text/color data-* attributes
+      (data-title, data-greeting, data-accent, data-bg, …). See the README.
     -->
     <script
       src="../../dist/s7-voice-widget.js"
       data-agent-id="agent_REPLACE_WITH_YOUR_PUBLIC_AGENT_ID"
-      data-api-base=""
-      data-public-phone=""
-      data-accent="#04e3ee"
     ></script>
   </body>
 </html>

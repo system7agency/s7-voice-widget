@@ -1,8 +1,10 @@
 # S7 Voice Widget
 
-An embeddable ElevenLabs **chat + voice** widget — the floating cyan bubble from
-[s7labs.ai](https://s7labs.ai), extracted into a standalone, drop-anywhere
-component. Same design, same behaviour. Add your ElevenLabs agent and it works.
+An embeddable ElevenLabs **chat + voice** widget — the floating blue bubble from
+[system7.ai](https://system7.ai), packaged as a standalone, drop-anywhere
+component. Add your ElevenLabs agent and it works. Ships with the system7.ai
+look (black surfaces, white text, electric-blue accent) out of the box, and is
+fully themeable per site via `data-*` attributes.
 
 Three modes, all preserved from the original:
 
@@ -52,15 +54,15 @@ properties on the widget root inside its Shadow DOM.
 | `data-public-phone` | none                                           | Number shown in the "Call us directly" option (e.g. `+1 555 010 1234`).      |
 | `data-enabled`      | `true`                                         | Set to `false` to hard-disable the widget.                                  |
 | **Text**            |                                                |                                                                              |
-| `data-title`        | `S7 LABS // AI`                                | Widget header text.                                                          |
+| `data-title`        | `system⁷`                                      | Widget header text.                                                          |
 | `data-greeting`     | none (chat starts empty)                       | Welcome message shown as the first assistant message when the chat opens.    |
-| `data-button-label` | `// ASK S7`                                    | Launcher (collapsed bubble) text.                                            |
-| `data-placeholder`  | `type your question_`                          | Chat input placeholder.                                                      |
-| `data-cta`          | `▸`                                            | Send-button / call-to-action label.                                          |
+| `data-button-label` | `Ask system⁷`                                  | Launcher (collapsed bubble) text.                                            |
+| `data-placeholder`  | `Ask anything…`                                | Chat input placeholder.                                                      |
+| `data-cta`          | `→`                                            | Send-button / call-to-action label.                                          |
 | **Colors**          |                                                |                                                                              |
-| `data-accent`       | `#04e3ee`                                      | Primary accent color (borders, glows, send button, highlights).             |
-| `data-bg`           | `linear-gradient(180deg, #0b0b10, #070709)`    | Widget panel background (any CSS color or gradient).                        |
-| `data-text`         | `#ededed`                                      | Primary text color.                                                          |
+| `data-accent`       | `#0009ff`                                      | Primary accent color (borders, glows, send button, highlights).             |
+| `data-bg`           | `linear-gradient(180deg, #08080d, #000000)`    | Widget panel background (any CSS color or gradient).                        |
+| `data-text`         | `#ffffff`                                      | Primary text color.                                                          |
 | `data-button-bg`    | accent color                                   | Launcher orb background — also drives the header dot, chat avatar, and voice orb so the theme stays coherent. |
 
 Full example using everything:
@@ -172,7 +174,7 @@ timeout, and secret-safe error logging.
 src/
   embed.tsx              # custom element + Shadow DOM mount + script auto-mount
   widget/
-    S7ChatWidget.tsx     # the widget (ported from s7labs, near 1:1)
+    S7ChatWidget.tsx     # the widget (system7.ai theme)
     widget.css           # styles, injected into the shadow root
     config.ts            # runtime config types
 server/

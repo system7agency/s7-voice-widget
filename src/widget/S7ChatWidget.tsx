@@ -39,7 +39,7 @@ function formatTimestamp(date: Date) {
 }
 
 function formatSessionDivider(date: Date) {
-  return `SESSION // ${date.toUTCString().slice(17, 25)} UTC`
+  return `${date.toUTCString().slice(17, 22)} UTC`
 }
 
 function formatDuration(seconds: number) {
@@ -102,7 +102,7 @@ function themeVars(config: WidgetConfig): React.CSSProperties | undefined {
     vars['--s7-orb-bg'] =
       `radial-gradient(circle at 32% 28%, ` +
       `color-mix(in srgb, ${orb} 30%, #ffffff) 0%, ${orb} 36%, ` +
-      `color-mix(in srgb, ${orb} 55%, #06212f) 68%, #06212f 100%)`
+      `color-mix(in srgb, ${orb} 55%, #00021a) 68%, #00021a 100%)`
   }
 
   return Object.keys(vars).length ? (vars as React.CSSProperties) : undefined
@@ -167,13 +167,13 @@ export function S7ChatWidget({ config }: { config: WidgetConfig }) {
           type="button"
           className={styles.bubble}
           onClick={() => setOpen(true)}
-          aria-label={config.title ? `Open ${config.title} chat` : 'Open S7 chat'}
+          aria-label={config.title ? `Open ${config.title} chat` : 'Open system7 chat'}
         >
           <span className={styles.orb} aria-hidden />
           <span className={styles.pill}>
             {config.buttonLabel ?? (
               <>
-                {'// ASK S'}
+                {'Ask system'}
                 <sup className="wordmark-superscript">7</sup>
               </>
             )}{' '}
@@ -261,7 +261,7 @@ function S7ChatPanel({
       setCallDuration(0)
     },
     onModeChange: ({ mode: agentMode }: { mode: 'speaking' | 'listening' }) => {
-      setVoiceStatusText(agentMode === 'speaking' ? 'S7 IS SPEAKING...' : 'LISTENING...')
+      setVoiceStatusText(agentMode === 'speaking' ? 'SPEAKING…' : 'LISTENING…')
     },
     onError: (msg: string, context?: unknown) => {
       console.error('[S7ChatWidget] voice onError:', msg, context)
@@ -541,7 +541,7 @@ function S7ChatPanel({
 
   return (
     <div className={`${styles.root} ${styles.rootOpen}`} style={themeVars(config)}>
-      <div className={styles.panel} role="dialog" aria-label={config.title || 'S7 Labs AI'}>
+      <div className={styles.panel} role="dialog" aria-label={config.title || 'system7'}>
         <div className={styles.header}>
           <div className={styles.headerLeft}>
             <div className={styles.headerLabelRow}>
@@ -549,8 +549,7 @@ function S7ChatPanel({
               <span className={styles.headerLabel}>
                 {config.title ?? (
                   <>
-                    S<sup className="wordmark-superscript">7</sup>
-                    {' LABS // AI'}
+                    system<sup className="wordmark-superscript">7</sup>
                   </>
                 )}
               </span>
@@ -623,7 +622,7 @@ function S7ChatPanel({
                     )}
                     <div className={styles.msgBody}>
                       <div className={styles.msgMeta}>
-                        {isUser ? 'you' : '▸ s7.assistant'} · {m.timestamp}
+                        {isUser ? 'you' : 'system7'} · {m.timestamp}
                       </div>
                       <div className={`${styles.bubbleBody} ${isUser ? styles.bubbleUser : ''}`}>
                         {m.text}
@@ -637,10 +636,10 @@ function S7ChatPanel({
                 <div className={styles.msg}>
                   <span className={styles.avatar} aria-hidden />
                   <div className={styles.msgBody}>
-                    <div className={styles.msgMeta}>▸ s7.assistant</div>
+                    <div className={styles.msgMeta}>system7</div>
                     <div className={styles.bubbleBody}>
                       <span className={styles.typing}>
-                        $ reading.context
+                        thinking
                         <span className={styles.caret} />
                       </span>
                     </div>
@@ -652,7 +651,7 @@ function S7ChatPanel({
                 <div className={styles.msg}>
                   <span className={styles.avatar} aria-hidden />
                   <div className={styles.msgBody}>
-                    <div className={styles.msgMeta}>▸ s7.assistant · error</div>
+                    <div className={styles.msgMeta}>system7 · error</div>
                     <div className={`${styles.bubbleBody} ${styles.error}`}>{errorMsg}</div>
                   </div>
                 </div>
@@ -662,7 +661,6 @@ function S7ChatPanel({
             </div>
 
             <div className={styles.input}>
-              <span className={styles.prompt}>$</span>
               <input
                 className={styles.field}
                 type="text"
@@ -888,7 +886,7 @@ function S7ChatPanel({
         <div className={styles.footer}>
           <span>POWERED BY ELEVENLABS</span>
           <span>
-            S<sup className="wordmark-superscript">7</sup>_AI · v1.0
+            system<sup className="wordmark-superscript">7</sup> · v1.0
           </span>
         </div>
       </div>
