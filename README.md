@@ -1,10 +1,8 @@
 # S7 Voice Widget
 
-An embeddable ElevenLabs **chat + voice** widget — the floating blue bubble from
-[system7.ai](https://system7.ai), packaged as a standalone, drop-anywhere
-component. Add your ElevenLabs agent and it works. Ships with the system7.ai
-look (black surfaces, white text, electric-blue accent) out of the box, and is
-fully themeable per site via `data-*` attributes.
+An embeddable ElevenLabs **chat + voice** widget — the floating cyan bubble from
+[s7labs.ai](https://s7labs.ai), extracted into a standalone, drop-anywhere
+component. Same design, same behaviour. Add your ElevenLabs agent and it works.
 
 Three modes, all preserved from the original:
 
@@ -41,49 +39,13 @@ public ElevenLabs agent connects directly from the browser.
 
 ### Configuration (script `data-*` attributes)
 
-Every attribute except `data-agent-id` is optional — omit any of them and the
-widget keeps its stock S7 look and copy, so existing embeds are unchanged.
-Text values render as plain text (never HTML); color values accept any CSS
-color (`#hex`, `rgb(...)`, named colors, …) and are applied as CSS custom
-properties on the widget root inside its Shadow DOM.
-
-| Attribute           | Default                                        | Description                                                                 |
-| ------------------- | ---------------------------------------------- | --------------------------------------------------------------------------- |
-| `data-agent-id`     | — (**required**)                               | Your ElevenLabs **public** agent id (`agent_...`).                           |
-| `data-api-base`     | `""` (same origin)                             | Base URL of your outbound-call backend, e.g. `https://api.acme.com`. Only needed for "Get a call". |
-| `data-public-phone` | none                                           | Number shown in the "Call us directly" option (e.g. `+1 555 010 1234`).      |
-| `data-enabled`      | `true`                                         | Set to `false` to hard-disable the widget.                                  |
-| **Text**            |                                                |                                                                              |
-| `data-title`        | `system⁷`                                      | Widget header text.                                                          |
-| `data-greeting`     | none (chat starts empty)                       | Welcome message shown as the first assistant message when the chat opens.    |
-| `data-button-label` | `Ask system⁷`                                  | Launcher (collapsed bubble) text.                                            |
-| `data-placeholder`  | `Ask anything…`                                | Chat input placeholder.                                                      |
-| `data-cta`          | `→`                                            | Send-button / call-to-action label.                                          |
-| **Colors**          |                                                |                                                                              |
-| `data-accent`       | `#0009ff`                                      | Primary accent color (borders, glows, send button, highlights).             |
-| `data-bg`           | `linear-gradient(180deg, #08080d, #000000)`    | Widget panel background (any CSS color or gradient).                        |
-| `data-text`         | `#ffffff`                                      | Primary text color.                                                          |
-| `data-button-bg`    | accent color                                   | Launcher orb background — also drives the header dot, chat avatar, and voice orb so the theme stays coherent. |
-
-Full example using everything:
-
-```html
-<script
-  src="https://your-cdn.com/s7-voice-widget.js"
-  data-agent-id="agent_xxxxxxxxxxxxxxxxxxxxxxxx"
-  data-api-base="https://api.acme.com"
-  data-public-phone="+1 555 010 1234"
-  data-title="ACME // SUPPORT"
-  data-greeting="Hi! Ask me anything about Acme."
-  data-button-label="// ASK ACME"
-  data-placeholder="ask us anything_"
-  data-cta="Send"
-  data-accent="#7c5cff"
-  data-bg="#0d0a1a"
-  data-text="#f2eeff"
-  data-button-bg="#7c5cff"
-></script>
-```
+| Attribute           | Required | Description                                                                 |
+| ------------------- | -------- | --------------------------------------------------------------------------- |
+| `data-agent-id`     | ✅       | Your ElevenLabs **public** agent id (`agent_...`).                           |
+| `data-api-base`     | for get-a-call | Base URL of your outbound-call backend, e.g. `https://api.acme.com`. Empty = same origin. |
+| `data-public-phone` | optional | Number shown in the "Call us directly" option (e.g. `+1 555 010 1234`).      |
+| `data-accent`       | optional | Primary accent color override (default `#04e3ee`).                          |
+| `data-enabled`      | optional | Set to `false` to hard-disable the widget.                                  |
 
 ### Use as a custom element instead
 
@@ -93,11 +55,6 @@ The bundle also registers a custom element, if you'd rather place it yourself:
 <s7-voice-widget agent-id="agent_xxx" api-base="https://api.acme.com"></s7-voice-widget>
 <script src="https://your-cdn.com/s7-voice-widget.js"></script>
 ```
-
-The element accepts the same options as the script tag, minus the `data-`
-prefix (`accent`, `greeting`, `cta`, …) — with one exception: `data-title`
-becomes `widget-title`, because bare `title` is the global HTML tooltip
-attribute.
 
 ### Use in a React / Next.js app
 
@@ -174,7 +131,7 @@ timeout, and secret-safe error logging.
 src/
   embed.tsx              # custom element + Shadow DOM mount + script auto-mount
   widget/
-    S7ChatWidget.tsx     # the widget (system7.ai theme)
+    S7ChatWidget.tsx     # the widget (ported from s7labs, near 1:1)
     widget.css           # styles, injected into the shadow root
     config.ts            # runtime config types
 server/

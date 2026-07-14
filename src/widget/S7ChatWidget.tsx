@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { ConversationProvider, useConversation } from '@elevenlabs/react'
 
-import { OUTBOUND_CALL_PATH, TEXT_DEFAULTS, type WidgetConfig } from './config'
+import { OUTBOUND_CALL_PATH, type WidgetConfig } from './config'
 
 /**
  * Class-name accessor. The widget's CSS (widget.css) is injected into the host
@@ -39,7 +39,7 @@ function formatTimestamp(date: Date) {
 }
 
 function formatSessionDivider(date: Date) {
-  return `${date.toUTCString().slice(17, 22)} UTC`
+  return `SESSION // ${date.toUTCString().slice(17, 25)} UTC`
 }
 
 function formatDuration(seconds: number) {
@@ -52,65 +52,6 @@ function formatDuration(seconds: number) {
 
 function makeId() {
   return `${Date.now()}-${Math.random().toString(36).slice(2, 8)}`
-}
-
-/**
- * Accept any valid CSS color, drop anything else. Values land in inline
- * `style` custom properties (never innerHTML), so this guards against broken
- * styling rather than injection — but embedders pass arbitrary attribute
- * strings, so validate anyway.
- */
-function sanitizeColor(value?: string): string | undefined {
-  const v = value?.trim()
-  if (!v) return undefined
-  if (typeof CSS !== 'undefined' && typeof CSS.supports === 'function') {
-    if (CSS.supports('color', v)) return v
-    console.warn(`[S7ChatWidget] ignoring invalid color value: "${v}"`)
-    return undefined
-  }
-  // No CSS.supports available: allow plain color-ish tokens only.
-  return /^[#a-zA-Z0-9(),.%\s-]+$/.test(v) ? v : undefined
-}
-
-/**
- * Embed-time color overrides as CSS custom properties, applied inline on the
- * widget root. widget.css defines the defaults on `.root`; inline styles win,
- * and custom properties cascade to everything inside — so one variable drives
- * every use of that color. Returns undefined when nothing is overridden, so a
- * stock embed renders exactly as before.
- */
-function themeVars(config: WidgetConfig): React.CSSProperties | undefined {
-  const vars: Record<string, string> = {}
-
-  const accent = sanitizeColor(config.accent)
-  if (accent) {
-    vars['--s7-accent'] = accent
-    vars['--s7-accent-dim'] = `color-mix(in srgb, ${accent} 18%, transparent)`
-    vars['--s7-accent-glow'] = `color-mix(in srgb, ${accent} 35%, transparent)`
-  }
-
-  const bg = sanitizeColor(config.bg)
-  if (bg) vars['--s7-panel-bg'] = bg
-
-  const fg = sanitizeColor(config.textColor)
-  if (fg) vars['--s7-fg'] = fg
-
-  // The orb gradient (launcher button, header dot, avatar, voice orb) keys
-  // off `buttonBg`, falling back to the accent per the theming contract.
-  // Glossy glass sphere: a top sheen over a specular-lit body (white
-  // highlight → accent core → dark rim), matching the default look while
-  // adapting to any override color. See --s7-orb-bg in widget.css.
-  const orb = sanitizeColor(config.buttonBg) ?? accent
-  if (orb) {
-    vars['--s7-orb-bg'] =
-      `radial-gradient(90% 55% at 50% 5%, rgba(255,255,255,0.42) 0%, rgba(255,255,255,0) 46%), ` +
-      `radial-gradient(circle at 33% 27%, #ffffff 0%, ` +
-      `color-mix(in srgb, ${orb} 30%, #ffffff) 7%, ` +
-      `color-mix(in srgb, ${orb} 80%, #ffffff) 40%, ${orb} 60%, ` +
-      `color-mix(in srgb, ${orb} 55%, #000000) 84%, color-mix(in srgb, ${orb} 22%, #000000) 100%)`
-  }
-
-  return Object.keys(vars).length ? (vars as React.CSSProperties) : undefined
 }
 
 export function S7ChatWidget({ config }: { config: WidgetConfig }) {
@@ -167,21 +108,17 @@ export function S7ChatWidget({ config }: { config: WidgetConfig }) {
 
   if (!open) {
     return (
-      <div className={styles.root} style={themeVars(config)}>
+      <div className={styles.root}>
         <button
           type="button"
           className={styles.bubble}
           onClick={() => setOpen(true)}
-          aria-label={config.title ? `Open ${config.title} chat` : 'Open system7 chat'}
+          aria-label="Open S7 chat"
         >
           <span className={styles.orb} aria-hidden />
           <span className={styles.pill}>
-            {config.buttonLabel ?? (
-              <>
-                {'Ask system'}
-                <sup className="wordmark-superscript">7</sup>
-              </>
-            )}{' '}
+            {'// ASK S'}
+            <sup className="wordmark-superscript">7</sup>{' '}
             <span className={styles.pillArrow}>→</span>
           </span>
         </button>
@@ -230,13 +167,7 @@ function S7ChatPanel({
   const PUBLIC_PHONE = config.publicPhone
 
   const [mode, setMode] = useState<Mode>('chat')
-  // Optional embed-time greeting, seeded as the first assistant message.
-  // Absent (the default) the chat starts empty, as it always has.
-  const [messages, setMessages] = useState<ChatMessage[]>(() =>
-    config.greeting
-      ? [{ id: makeId(), role: 'ai', text: config.greeting, timestamp: formatTimestamp(new Date()) }]
-      : []
-  )
+  const [messages, setMessages] = useState<ChatMessage[]>([])
   const [input, setInput] = useState('')
   const [isWaiting, setIsWaiting] = useState(false)
   const [errorMsg, setErrorMsg] = useState<string | null>(null)
@@ -266,7 +197,7 @@ function S7ChatPanel({
       setCallDuration(0)
     },
     onModeChange: ({ mode: agentMode }: { mode: 'speaking' | 'listening' }) => {
-      setVoiceStatusText(agentMode === 'speaking' ? 'SPEAKING…' : 'LISTENING…')
+      setVoiceStatusText(agentMode === 'speaking' ? 'S7 IS SPEAKING...' : 'LISTENING...')
     },
     onError: (msg: string, context?: unknown) => {
       console.error('[S7ChatWidget] voice onError:', msg, context)
@@ -545,18 +476,15 @@ function S7ChatPanel({
   }
 
   return (
-    <div className={`${styles.root} ${styles.rootOpen}`} style={themeVars(config)}>
-      <div className={styles.panel} role="dialog" aria-label={config.title || 'system7'}>
+    <div className={`${styles.root} ${styles.rootOpen}`}>
+      <div className={styles.panel} role="dialog" aria-label="S7 Labs AI">
         <div className={styles.header}>
           <div className={styles.headerLeft}>
             <div className={styles.headerLabelRow}>
               <span className={styles.miniOrb} aria-hidden />
               <span className={styles.headerLabel}>
-                {config.title ?? (
-                  <>
-                    system<sup className="wordmark-superscript">7</sup>
-                  </>
-                )}
+                S<sup className="wordmark-superscript">7</sup>
+                {' LABS // AI'}
               </span>
             </div>
             <div className={styles.statusLine}>
@@ -627,7 +555,7 @@ function S7ChatPanel({
                     )}
                     <div className={styles.msgBody}>
                       <div className={styles.msgMeta}>
-                        {isUser ? 'you' : 'system7'} · {m.timestamp}
+                        {isUser ? 'you' : '▸ s7.assistant'} · {m.timestamp}
                       </div>
                       <div className={`${styles.bubbleBody} ${isUser ? styles.bubbleUser : ''}`}>
                         {m.text}
@@ -641,10 +569,10 @@ function S7ChatPanel({
                 <div className={styles.msg}>
                   <span className={styles.avatar} aria-hidden />
                   <div className={styles.msgBody}>
-                    <div className={styles.msgMeta}>system7</div>
+                    <div className={styles.msgMeta}>▸ s7.assistant</div>
                     <div className={styles.bubbleBody}>
                       <span className={styles.typing}>
-                        thinking
+                        $ reading.context
                         <span className={styles.caret} />
                       </span>
                     </div>
@@ -656,7 +584,7 @@ function S7ChatPanel({
                 <div className={styles.msg}>
                   <span className={styles.avatar} aria-hidden />
                   <div className={styles.msgBody}>
-                    <div className={styles.msgMeta}>system7 · error</div>
+                    <div className={styles.msgMeta}>▸ s7.assistant · error</div>
                     <div className={`${styles.bubbleBody} ${styles.error}`}>{errorMsg}</div>
                   </div>
                 </div>
@@ -666,13 +594,14 @@ function S7ChatPanel({
             </div>
 
             <div className={styles.input}>
+              <span className={styles.prompt}>$</span>
               <input
                 className={styles.field}
                 type="text"
                 value={input}
                 onChange={(e) => setInput(e.target.value)}
                 onKeyDown={handleKeyDown}
-                placeholder={config.placeholder ?? TEXT_DEFAULTS.placeholder}
+                placeholder="type your question_"
                 aria-label="Chat input"
                 autoComplete="off"
                 autoCorrect="off"
@@ -681,12 +610,12 @@ function S7ChatPanel({
               />
               <button
                 type="button"
-                className={`${styles.send} ${config.cta ? styles.sendWide : ''}`}
+                className={styles.send}
                 onClick={handleSend}
                 disabled={!input.trim() || isWaiting}
                 aria-label="Send message"
               >
-                {config.cta ?? TEXT_DEFAULTS.cta}
+                ▸
               </button>
             </div>
           </>
@@ -891,7 +820,7 @@ function S7ChatPanel({
         <div className={styles.footer}>
           <span>POWERED BY ELEVENLABS</span>
           <span>
-            system<sup className="wordmark-superscript">7</sup> · v1.0
+            S<sup className="wordmark-superscript">7</sup>_AI · v1.0
           </span>
         </div>
       </div>
