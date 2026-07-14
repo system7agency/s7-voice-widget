@@ -554,7 +554,7 @@ function S7ChatPanel({
                     )}
                     <div className={styles.msgBody}>
                       <div className={styles.msgMeta}>
-                        {isUser ? 'you' : '▸ s7.assistant'} · {m.timestamp}
+                        {isUser ? 'you' : '▸ system7.assistant'} · {m.timestamp}
                       </div>
                       <div className={`${styles.bubbleBody} ${isUser ? styles.bubbleUser : ''}`}>
                         {m.text}
@@ -568,7 +568,7 @@ function S7ChatPanel({
                 <div className={styles.msg}>
                   <span className={styles.avatar} aria-hidden />
                   <div className={styles.msgBody}>
-                    <div className={styles.msgMeta}>▸ s7.assistant</div>
+                    <div className={styles.msgMeta}>▸ system7.assistant</div>
                     <div className={styles.bubbleBody}>
                       <span className={styles.typing}>
                         $ reading.context
@@ -583,7 +583,7 @@ function S7ChatPanel({
                 <div className={styles.msg}>
                   <span className={styles.avatar} aria-hidden />
                   <div className={styles.msgBody}>
-                    <div className={styles.msgMeta}>▸ s7.assistant · error</div>
+                    <div className={styles.msgMeta}>▸ system7.assistant · error</div>
                     <div className={`${styles.bubbleBody} ${styles.error}`}>{errorMsg}</div>
                   </div>
                 </div>
@@ -819,7 +819,7 @@ function S7ChatPanel({
         <div className={styles.footer}>
           <span>POWERED BY ELEVENLABS</span>
           <span>
-            S<sup className="wordmark-superscript">7</sup>_AI · v1.0
+            system<sup className="wordmark-superscript">7</sup>_AI · v1.0
           </span>
         </div>
       </div>
