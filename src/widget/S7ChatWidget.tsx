@@ -166,7 +166,8 @@ function S7ChatPanel({
   const agentId = config.agentId
   const PUBLIC_PHONE = config.publicPhone
 
-  const [mode, setMode] = useState<Mode>('chat')
+  // Open on the Voice tab by default (users switch to Chat via the toggle).
+  const [mode, setMode] = useState<Mode>('voice')
   const [messages, setMessages] = useState<ChatMessage[]>([])
   const [input, setInput] = useState('')
   const [isWaiting, setIsWaiting] = useState(false)
