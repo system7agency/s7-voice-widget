@@ -483,8 +483,7 @@ function S7ChatPanel({
             <div className={styles.headerLabelRow}>
               <span className={styles.miniOrb} aria-hidden />
               <span className={styles.headerLabel}>
-                S<sup className="wordmark-superscript">7</sup>
-                {' LABS // AI'}
+                system<sup className="wordmark-superscript">7</sup>
               </span>
             </div>
             <div className={styles.statusLine}>

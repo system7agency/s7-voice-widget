@@ -223,6 +223,12 @@
   color: var(--s7-fg);
 }
 
+/* Header wordmark's "7" — a touch larger than the default 0.6em superscript,
+   scoped to the header so the launcher pill and footer stay unchanged. */
+.headerLabel .wordmark-superscript {
+  font-size: 0.72em;
+}
+
 .statusLine {
   font-family: var(--s7-mono);
   font-size: 10px;
