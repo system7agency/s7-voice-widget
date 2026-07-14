@@ -8,11 +8,17 @@ import widgetCss from './widget/widget.css?inline'
 
 const TAG = 's7-voice-widget'
 
+// Default "Call us directly" number, shown when no `public-phone`/`data-public-phone`
+// is supplied. Baked in so the third voice-tab card (with click-to-copy on
+// desktop, tap-to-call on mobile) appears without configuring the embed tag.
+// Override per-embed with `data-public-phone="…"`.
+const DEFAULT_PUBLIC_PHONE = '+1 620 374 9982'
+
 function readConfig(el: HTMLElement): WidgetConfig {
   return {
     agentId: el.getAttribute('agent-id')?.trim() ?? '',
     apiBase: (el.getAttribute('api-base') ?? '').replace(/\/$/, ''),
-    publicPhone: el.getAttribute('public-phone') ?? '',
+    publicPhone: el.getAttribute('public-phone')?.trim() || DEFAULT_PUBLIC_PHONE,
     enabled: el.getAttribute('enabled') !== 'false',
   }
 }
