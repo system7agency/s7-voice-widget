@@ -639,43 +639,42 @@
  * @property --s7-halo-angle and the pillHaloSpin 3.6s linear keyframe so the
  * cards and the pill share one effect. Additive: it rides the card border
  * while the breathing glow (::card box-shadow) and corner brackets (::after)
- * layer underneath/on top. Desktop only — see the @media block below.
- * No overflow:hidden: this is a border ring (inset -1px), not a surface sweep.
+ * layer underneath/on top. Shown at all viewport widths — some embed contexts
+ * report a tiny/zero viewport width that a min-width gate would wrongly
+ * suppress. No overflow:hidden: a border ring (inset -1px), not a surface sweep.
  */
-@media (min-width: 768px) {
-  .callCard.callCardGlow::before {
-    content: '';
-    position: absolute;
-    inset: -1px;
-    border-radius: 11px; /* card radius (10px) + 1px inset */
-    padding: 1px;
-    background: conic-gradient(
-      from var(--s7-halo-angle),
-      rgba(4, 227, 238, 0) 0deg,
-      rgba(4, 227, 238, 0) 280deg,
-      var(--s7-accent) 340deg,
-      #ffffff 360deg,
-      var(--s7-accent) 380deg,
-      rgba(4, 227, 238, 0) 440deg,
-      rgba(4, 227, 238, 0) 720deg
-    );
-    -webkit-mask:
-      linear-gradient(#000 0 0) content-box,
-      linear-gradient(#000 0 0);
-    -webkit-mask-composite: xor;
-    mask:
-      linear-gradient(#000 0 0) content-box,
-      linear-gradient(#000 0 0);
-    mask-composite: exclude;
-    animation: pillHaloSpin 3.6s linear infinite;
-    pointer-events: none;
-  }
+.callCard.callCardGlow::before {
+  content: '';
+  position: absolute;
+  inset: -1px;
+  border-radius: 11px; /* card radius (10px) + 1px inset */
+  padding: 1px;
+  background: conic-gradient(
+    from var(--s7-halo-angle),
+    rgba(4, 227, 238, 0) 0deg,
+    rgba(4, 227, 238, 0) 280deg,
+    var(--s7-accent) 340deg,
+    #ffffff 360deg,
+    var(--s7-accent) 380deg,
+    rgba(4, 227, 238, 0) 440deg,
+    rgba(4, 227, 238, 0) 720deg
+  );
+  -webkit-mask:
+    linear-gradient(#000 0 0) content-box,
+    linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask:
+    linear-gradient(#000 0 0) content-box,
+    linear-gradient(#000 0 0);
+  mask-composite: exclude;
+  animation: pillHaloSpin 3.6s linear infinite;
+  pointer-events: none;
+}
 
-  /* Stagger the second card (Card B) by half a cycle so the two glints
-     don't orbit in lockstep. */
-  .callCard.callCardGlow:nth-of-type(2)::before {
-    animation-delay: 1.8s;
-  }
+/* Stagger the second card (Card B) by half a cycle so the two glints
+   don't orbit in lockstep. */
+.callCard.callCardGlow:nth-of-type(2)::before {
+  animation-delay: 1.8s;
 }
 
 .callCardIcon {

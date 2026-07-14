@@ -68,6 +68,32 @@ class S7VoiceWidgetElement extends HTMLElement {
   }
 }
 
+/**
+ * Register `--s7-halo-angle` as a real `<angle>` custom property at the document
+ * level. The spinning border glint on the launcher pill and the two voice
+ * option cards animates a conic-gradient's `from var(--s7-halo-angle)` angle,
+ * which only works if the property is registered. Chromium does NOT honor an
+ * `@property` rule that lives inside a Shadow DOM stylesheet (which is where
+ * widget.css is injected), so without this the gradient is invalid and the
+ * glint never renders. Registering here (document-global) fixes it inside the
+ * shadow root. Safe to call repeatedly — re-registration throws and is ignored.
+ */
+function registerHaloAngle() {
+  if (typeof CSS === 'undefined' || typeof CSS.registerProperty !== 'function') return
+  try {
+    CSS.registerProperty({
+      name: '--s7-halo-angle',
+      syntax: '<angle>',
+      initialValue: '0deg',
+      inherits: false,
+    })
+  } catch {
+    /* already registered — ignore */
+  }
+}
+
+registerHaloAngle()
+
 if (typeof customElements !== 'undefined' && !customElements.get(TAG)) {
   customElements.define(TAG, S7VoiceWidgetElement)
 }
